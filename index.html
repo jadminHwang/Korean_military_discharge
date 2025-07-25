@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>군 복무 계산기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            color: #3d4a3b;
+            background: linear-gradient(135deg, #8b9a7a, #a8b89c);
+            padding: 10px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f8f9f7;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid #d4d9ce;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6b7a5a, #7a8b69);
+            color: #f8f9f7;
+            text-align: center;
+            padding: 25px 15px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .helmet-icon {
+            width: 35px;
+            height: 35px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            padding: 25px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #5a6b4a;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #c7d0bc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: #ffffff;
+            color: #3d4a3b;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7a8b69;
+            box-shadow: 0 0 5px rgba(122, 139, 105, 0.3);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .calculate-btn {
+            flex: 2;
+            background: linear-gradient(135deg, #7a8b69, #8b9a7a);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #95a09a, #a8b5a8);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .share-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #d4af37, #e6c853);
+            color: #3d4a3b;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 15px;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .calculator-share-btn {
+            background: linear-gradient(135deg, #d4af37, #e6c853);
+            color: #3d4a3b;
+            border: none;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .share-btn:disabled {
+            background: linear-gradient(135deg, #95a09a, #a8b5a8);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .calculator-share-btn:hover,
+        .share-btn:hover,
+        .calculate-btn:hover,
+        .reset-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f0f2ed;
+            border-radius: 8px;
+            border-left: 4px solid #7a8b69;
+            border: 1px solid #d4d9ce;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #5a6b4a;
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: #6b4423;
+            font-size: 1.1rem;
+        }
+
+        .progress-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9f7;
+            border-radius: 8px;
+            border: 1px solid #d4d9ce;
+        }
+
+        .progress-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #5a6b4a;
+        }
+
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f0f2ed;
+            border-radius: 6px;
+            border-left: 4px solid #a8b5a8;
+            border: 1px solid #e2e7dc;
+        }
+
+        .rank-item.current {
+            border-left-color: #7a8b69;
+            background: #e8f0e2;
+            border-color: #c7d0bc;
+        }
+
+        .rank-item.completed {
+            border-left-color: #6b7a5a;
+            background: #e2ede2;
+            border-color: #c4d1c4;
+        }
+
+        .rank-name {
+            font-weight: 600;
+        }
+
+        .rank-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .rank-salary {
+            font-weight: 700;
+            color: #6b4423;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 8px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+                line-height: 1.2;
+            }
+            
+            .helmet-icon {
+                width: 30px;
+                height: 30px;
+                margin-right: 6px;
+            }
+            
+            .header p {
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+            
+            .form-section {
+                padding: 20px 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-group label {
+                font-size: 1rem;
+                margin-bottom: 6px;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 14px 12px;
+                font-size: 16px;
+                border-radius: 6px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .calculate-btn,
+            .reset-btn {
+                flex: none;
+                width: 100%;
+                padding: 16px;
+                font-size: 1rem;
+                border-radius: 6px;
+            }
+            
+            .share-btn {
+                padding: 16px;
+                font-size: 1rem;
+                border-radius: 6px;
+            }
+            
+            .results {
+                margin-top: 20px;
+                padding: 20px;
+                border-radius: 6px;
+            }
+            
+            .result-item {
+                padding: 12px 0;
+            }
+            
+            .result-label {
+                font-size: 0.95rem;
+            }
+            
+            .result-value {
+                font-size: 1rem;
+                font-weight: 600;
+            }
+            
+            .progress-section {
+                margin-top: 15px;
+                padding: 15px;
+                border-radius: 6px;
+            }
+            
+            .progress-title {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+            
+            .rank-item {
+                padding: 12px;
+                margin-bottom: 8px;
+                border-radius: 4px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .rank-name {
+                font-size: 0.95rem;
+            }
+            
+            .rank-date {
+                font-size: 0.85rem;
+            }
+            
+            .rank-salary {
+                font-size: 0.95rem;
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .helmet-icon {
+                width: 28px;
+                height: 28px;
+                margin-right: 5px;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .form-section {
+                padding: 15px 12px;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 12px 10px;
+            }
+            
+            .calculator-share-btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                margin-bottom: 10px;
+            }
+            
+            .calculate-btn,
+            .reset-btn,
+            .share-btn {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><img src="https://public.youware.com/users-website-assets/prod/78f9635c-c354-4551-9f1f-2cf7ab13d837/29c540fd2eb344d8af1a35ca9301c35a.jpg" alt="군모 아이콘" class="helmet-icon"> 군 복무 계산기</h1>
+            <p>복무 시작일과 형태를 선택하여 전역일과 계급 진급일을 확인하세요</p>
+            <button class="calculator-share-btn" onclick="shareCalculator()">🔗 계산기 공유</button>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="startDate">입대일</label>
+                <input type="date" id="startDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="serviceType">복무 형태</label>
+                <select id="serviceType" required>
+                    <option value="">복무 형태를 선택하세요</option>
+                    <option value="army">육군 (18개월)</option>
+                    <option value="navy">해군 (20개월)</option>
+                    <option value="airforce">공군 (21개월)</option>
+                    <option value="police">의경 (18개월)</option>
+                    <option value="public">공익 (21개월)</option>
+                </select>
+            </div>
+
+            <div class="button-container">
+                <button class="calculate-btn" onclick="calculateService()">전역일 계산하기</button>
+                <button class="reset-btn" onclick="resetForm()">🔄 초기화</button>
+            </div>
+
+            <div id="results" class="results hidden">
+                <div class="result-item">
+                    <span class="result-label">입대일</span>
+                    <span class="result-value" id="startDateResult"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">복무 형태</span>
+                    <span class="result-value" id="serviceTypeResult"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">복무 기간</span>
+                    <span class="result-value" id="servicePeriodResult"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">전역 예정일</span>
+                    <span class="result-value" id="dischargeDate"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">남은 복무일</span>
+                    <span class="result-value" id="remainingDays"></span>
+                </div>
+            </div>
+
+            <div id="progressSection" class="progress-section hidden">
+                <div class="progress-title">📈 계급 진급 일정 및 월급</div>
+                <div id="rankProgress"></div>
+            </div>
+
+            <button id="shareBtn" class="share-btn hidden" onclick="shareResults()">📋 결과 공유하기</button>
+        </div>
+    </div>
+
+    <script>
+        // 복무 형태별 정보
+        const serviceInfo = {
+            army: {
+                name: '육군',
+                months: 18,
+                ranks: [
+                    { name: '이병', months: 0, salary: 680840 },
+                    { name: '일병', months: 3, salary: 740780 },
+                    { name: '상병', months: 9, salary: 840460 },
+                    { name: '병장', months: 15, salary: 940140 }
+                ]
+            },
+            navy: {
+                name: '해군',
+                months: 20,
+                ranks: [
+                    { name: '이병', months: 0, salary: 680840 },
+                    { name: '일병', months: 3, salary: 740780 },
+                    { name: '상병', months: 10, salary: 840460 },
+                    { name: '병장', months: 17, salary: 940140 }
+                ]
+            },
+            airforce: {
+                name: '공군',
+                months: 21,
+                ranks: [
+                    { name: '이병', months: 0, salary: 680840 },
+                    { name: '일병', months: 3, salary: 740780 },
+                    { name: '상병', months: 11, salary: 840460 },
+                    { name: '병장', months: 18, salary: 940140 }
+                ]
+            },
+            police: {
+                name: '의경',
+                months: 18,
+                ranks: [
+                    { name: '순경보', months: 0, salary: 680840 },
+                    { name: '순경', months: 3, salary: 740780 },
+                    { name: '경장', months: 9, salary: 840460 },
+                    { name: '경사', months: 15, salary: 940140 }
+                ]
+            },
+            public: {
+                name: '공익',
+                months: 21,
+                ranks: [
+                    { name: '공익요원', months: 0, salary: 680840 }
+                ]
+            }
+        };
+
+        function calculateService() {
+            const startDate = document.getElementById('startDate').value;
+            const serviceType = document.getElementById('serviceType').value;
+
+            if (!startDate || !serviceType) {
+                alert('입대일과 복무 형태를 모두 선택해주세요.');
+                return;
+            }
+
+            const start = new Date(startDate);
+            const service = serviceInfo[serviceType];
+            
+            // 전역일 계산 (복무 기간 - 1일)
+            const dischargeDate = new Date(start);
+            dischargeDate.setMonth(dischargeDate.getMonth() + service.months);
+            dischargeDate.setDate(dischargeDate.getDate() - 1);
+
+            // 결과 표시
+            document.getElementById('startDateResult').textContent = formatDate(start);
+            document.getElementById('serviceTypeResult').textContent = service.name;
+            document.getElementById('servicePeriodResult').textContent = service.months + '개월';
+            document.getElementById('dischargeDate').textContent = formatDate(dischargeDate);
+
+            // 남은 복무일 계산
+            const today = new Date();
+            const remainingMs = dischargeDate.getTime() - today.getTime();
+            const remainingDays = Math.ceil(remainingMs / (1000 * 60 * 60 * 24));
+            
+            if (remainingDays > 0) {
+                document.getElementById('remainingDays').textContent = remainingDays + '일';
+            } else if (remainingDays === 0) {
+                document.getElementById('remainingDays').textContent = '오늘 전역!';
+            } else {
+                document.getElementById('remainingDays').textContent = '전역 완료';
+            }
+
+            // 계급 진급 정보 표시
+            displayRankProgress(start, service, today);
+
+            // 결과 영역 표시
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('progressSection').classList.remove('hidden');
+            document.getElementById('shareBtn').classList.remove('hidden');
+        }
+
+        function displayRankProgress(startDate, service, today) {
+            const rankProgressDiv = document.getElementById('rankProgress');
+            rankProgressDiv.innerHTML = '';
+
+            service.ranks.forEach((rank, index) => {
+                const promotionDate = new Date(startDate);
+                promotionDate.setMonth(promotionDate.getMonth() + rank.months);
+
+                const rankItem = document.createElement('div');
+                rankItem.className = 'rank-item';
+
+                // 현재 계급인지 확인
+                const nextPromotionDate = index < service.ranks.length - 1 
+                    ? new Date(startDate.getTime()).setMonth(startDate.getMonth() + service.ranks[index + 1].months)
+                    : null;
+
+                if (today >= promotionDate && (nextPromotionDate === null || today < nextPromotionDate)) {
+                    rankItem.classList.add('current');
+                } else if (today >= promotionDate) {
+                    rankItem.classList.add('completed');
+                }
+
+                rankItem.innerHTML = `
+                    <div>
+                        <div class="rank-name">${rank.name}</div>
+                        <div class="rank-date">${formatDate(promotionDate)} 진급</div>
+                    </div>
+                    <div class="rank-salary">${rank.salary.toLocaleString()}원</div>
+                `;
+
+                rankProgressDiv.appendChild(rankItem);
+            });
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}년 ${month}월 ${day}일`;
+        }
+
+        function resetForm() {
+            // 입력 필드 초기화
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = todayString;
+            document.getElementById('serviceType').value = '';
+            
+            // 결과 영역 숨기기
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('progressSection').classList.add('hidden');
+            document.getElementById('shareBtn').classList.add('hidden');
+        }
+
+        function shareResults() {
+            const startDate = document.getElementById('startDateResult').textContent;
+            const serviceType = document.getElementById('serviceTypeResult').textContent;
+            const servicePeriod = document.getElementById('servicePeriodResult').textContent;
+            const dischargeDate = document.getElementById('dischargeDate').textContent;
+            const remainingDays = document.getElementById('remainingDays').textContent;
+
+            const shareText = `🪖 군 복무 계산기 결과
+
+📅 입대일: ${startDate}
+🎖️ 복무형태: ${serviceType} (${servicePeriod})
+🎉 전역예정일: ${dischargeDate}
+⏰ 남은 복무일: ${remainingDays}
+
+#군복무 #전역계산기 #군생활`;
+
+            // 클립보드에 복사
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast('📋 결과가 클립보드에 복사되었습니다!');
+                }).catch(() => {
+                    fallbackCopyToClipboard(shareText);
+                });
+            } else {
+                fallbackCopyToClipboard(shareText);
+            }
+        }
+
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast('📋 결과가 클립보드에 복사되었습니다!');
+            } catch (err) {
+                showToast('❌ 복사에 실패했습니다. 수동으로 복사해주세요.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function shareCalculator() {
+            const shareText = `🪖 군 복무 계산기
+
+전역일과 계급 진급일을 한 번에!
+입대일과 복무형태만 입력하면 전역일까지 자동 계산해드립니다.
+
+✅ 육군/해군/공군/의경/공익 지원
+✅ 계급별 진급일 및 월급 정보
+✅ 실시간 남은 복무일 계산
+
+#군복무 #전역계산기 #군생활 #진급`;
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast('🔗 계산기 정보가 클립보드에 복사되었습니다!');
+                }).catch(() => {
+                    fallbackCopyToClipboard(shareText);
+                });
+            } else {
+                fallbackCopyToClipboard(shareText);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(107, 122, 90, 0.95);
+                color: #f8f9f7;
+                padding: 12px 20px;
+                border-radius: 25px;
+                font-size: 14px;
+                z-index: 1000;
+                animation: fadeInOut 3s ease-in-out;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+                    20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                document.body.removeChild(toast);
+                document.head.removeChild(style);
+            }, 3000);
+        }
+
+        // 페이지 로드 시 오늘 날짜로 기본값 설정
+        window.onload = function() {
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = todayString;
+        };
+    </script>
+</body>
+</html>
